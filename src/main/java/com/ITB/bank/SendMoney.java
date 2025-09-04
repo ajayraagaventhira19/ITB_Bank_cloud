@@ -24,6 +24,9 @@ public class SendMoney extends HttpServlet {
 			if(receiver!=null) {
 				if(sender.getAmount()>amount && !receivername.equals(sendername)) {
 					if(db.update_balance(sender, receiver, amount)) {
+						Account user=db.get_data(a.getUsername());
+						s.removeAttribute("username");
+						s.setAttribute("username", user);
 						response.sendRedirect("paymentdone.jsp");
 					}else {
 						response.sendRedirect("error.jsp");
