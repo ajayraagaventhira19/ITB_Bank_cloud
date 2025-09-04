@@ -89,67 +89,55 @@ public class ITBdao {
 		}
 	}
 	
-	public boolean update_balance(String senderUsername, String receiverUsername, double amount) {
-    String getBalance = "SELECT balance FROM ACCOUNT WHERE username=?";
+	public boolean update_balance(Account sender, Account receiver, double amount) {
+    if(sender.getAmount() < amount) return false; // insufficient funds
+
     String updateQuery = "UPDATE ACCOUNT SET balance=? WHERE username=?";
     String insertTxn = "INSERT INTO TRANSACTION_HISTORY(username, amount_before, current_balance, amount, transaction_message, txn_date) VALUES(?,?,?,?,?,NOW())";
 
     try {
-        double senderOldBalance = 0;
-        try (PreparedStatement ps = con.prepareStatement(getBalance)) {
-            ps.setString(1, senderUsername);
-            ResultSet rs = ps.executeQuery();
-            if (rs.next()) senderOldBalance = rs.getDouble("balance");
-            else return false; 
-        }
-
-        if (senderOldBalance < amount) return false; 
-        double senderNewBalance = senderOldBalance - amount;
-
-        double receiverOldBalance = 0;
-        try (PreparedStatement ps = con.prepareStatement(getBalance)) {
-            ps.setString(1, receiverUsername);
-            ResultSet rs = ps.executeQuery();
-            if (rs.next()) receiverOldBalance = rs.getDouble("balance");
-            else return false; 
-        }
-        double receiverNewBalance = receiverOldBalance + amount;
-
+        // Deduct from sender
+        double senderOld = sender.getAmount();
+        double senderNew = senderOld - amount;
         try (PreparedStatement ps = con.prepareStatement(updateQuery)) {
-            ps.setDouble(1, senderNewBalance);
-            ps.setString(2, senderUsername);
+            ps.setDouble(1, senderNew);
+            ps.setString(2, sender.getUsername());
             ps.executeUpdate();
         }
         try (PreparedStatement ps = con.prepareStatement(insertTxn)) {
-            ps.setString(1, senderUsername);
-            ps.setDouble(2, senderOldBalance);
-            ps.setDouble(3, senderNewBalance);
+            ps.setString(1, sender.getUsername());
+            ps.setDouble(2, senderOld);
+            ps.setDouble(3, senderNew);
             ps.setDouble(4, amount);
-            ps.setString(5, "Transferred " + amount + " to " + receiverUsername);
+            ps.setString(5, "Transferred " + amount + " to " + receiver.getUsername());
             ps.executeUpdate();
         }
 
+        // Add to receiver
+        double receiverOld = receiver.getAmount();
+        double receiverNew = receiverOld + amount;
         try (PreparedStatement ps = con.prepareStatement(updateQuery)) {
-            ps.setDouble(1, receiverNewBalance);
-            ps.setString(2, receiverUsername);
+            ps.setDouble(1, receiverNew);
+            ps.setString(2, receiver.getUsername());
             ps.executeUpdate();
         }
         try (PreparedStatement ps = con.prepareStatement(insertTxn)) {
-            ps.setString(1, receiverUsername);
-            ps.setDouble(2, receiverOldBalance);
-            ps.setDouble(3, receiverNewBalance);
+            ps.setString(1, receiver.getUsername());
+            ps.setDouble(2, receiverOld);
+            ps.setDouble(3, receiverNew);
             ps.setDouble(4, amount);
-            ps.setString(5, "Received " + amount + " from " + senderUsername);
+            ps.setString(5, "Received " + amount + " from " + sender.getUsername());
             ps.executeUpdate();
         }
 
         return true;
 
-    } catch (Exception e) {
+    } catch(Exception e) {
         e.printStackTrace();
         return false;
     }
 }
+
 
 	// Deposit money for a given account
 public boolean deposit_money(Account user, double amount) {
