@@ -1,0 +1,89 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+ <%@ page session="false" %>
+    
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ITB</title>
+    <link rel="icon" type="image/png" href="logo.png">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Libertinus+Sans:ital,wght@0,400;0,700;1,400&family=Libre+Caslon+Text:ital,wght@0,400;0,700;1,400&family=Saira+Condensed:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="homecss.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo">
+            <img src="logo.png" alt="Logo" width="50" height="100">
+            <h2><a href="#" class="tab2">ITB</a></h2>
+        </div>
+        <h1><a href="#" class="tab1">Indian Tesla Bank</a></h1>
+        <ul class="list">
+            <li><a href="#" class="tab">Home</a></li>
+            <li><a href="About.jsp" class="tab">About Us</a></li>
+            <li><a href="contact.jsp" class="tab">Contact</a></li>
+            <li><a href="insurance.jsp" class="tab">Insurance</a></li>
+            <li><a href="login.jsp" class="log">Login</a></li>
+            <li><a href="signup.jsp" class="log">Sign Up</a></li>
+        </ul>
+    </nav>
+    <marquee behavior="scroll" direction="left" scrollamount="5">
+  Welcome to Indian Tesla Bank! | ITB — Your Security, Our Priority | Join ITB Today for a Brighter Financial Future!
+</marquee>
+    <div class="home-container">
+
+       <form action="SendMoney.jsp" method="post" class="container">
+	    <button type="submit" class="send-money">
+	        <h1 class="rupee">₹</h1>
+	        <h1>Send Money</h1>
+	    </button>
+	</form>
+
+
+       <a href="ViewBalance" class="container"><div class="send-money">
+        <span class="material-symbols-outlined">account_balance</span>
+        <h1>View Balance</h1>
+       </div>
+      </a>
+      <form action="Deposit.jsp" method="post" class="container">
+	    <button type="submit" class="send-money">
+			<span class="material-symbols-outlined">payment_arrow_down</span>
+	        <h1>Deposit Money</h1>
+	    </button>
+	</form>
+       <form action="withdraw.jsp" method="post" class="container">
+	    <button type="submit" class="send-money">
+			<span class="material-symbols-outlined">payments</span>
+	        <h1>Withdraw Money</h1>
+	    </button>
+		</form>
+
+       <form action="TransactionHistory" method="get" class="container">
+	    <button type="submit" class="send-money">
+			<span class="material-symbols-outlined">history</span>
+	        <h1>Transaction History</h1>
+	    </button>
+		</form>
+    </div>
+    <img src="bank.jpg" alt="Bank Image" class="bank-image">
+
+    <footer>
+    <div class="footer-container">
+    <p class="foot">&copy; 2025 Indian Tesla Bank (IBT). All Rights Reserved.</p>
+    <p class="contact">Contact: info@ibtbank.com | Phone: +91 12345 67890</p>
+    <p class="follow">
+      Follow us:
+      <a href="#">Facebook</a> |
+      <a href="#">Twitter</a> |
+      <a href="#">Instagram</a>
+    </p>
+  </div>
+</footer>
+
+</body>
+</html>

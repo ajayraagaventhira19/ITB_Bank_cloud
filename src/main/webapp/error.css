@@ -1,0 +1,144 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box; 
+    font-family: "Libre Caslon Text", serif;
+  font-weight: 500;
+  font-style: normal;
+
+}
+
+.navbar {
+    background: #500075;
+background: linear-gradient(237deg,rgba(80, 0, 117, 1) 0%, rgba(191, 44, 44, 1) 36%, rgba(13, 7, 7, 1) 100%);
+    
+padding: 10px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+
+.tab {
+    text-decoration: none;
+    color: white;
+    font-weight: bold;
+    padding: 10px;
+}
+.tab1 {
+    text-decoration: none;
+    color: white;
+    font-weight: bold;
+    padding: 5px;
+    font-size:xx-large;
+}
+.tab2 {
+    text-decoration: none;
+    color: white;
+    font-weight: bold;
+    padding: 5px;
+}
+
+.navbar ul {
+    list-style: none;
+    display: flex;
+    gap: 40px;
+}
+
+
+.navbar .logo h2 {
+    display: inline-block;
+    position: relative;
+    bottom: 40px;
+
+}
+
+.navbar .logo h1 {
+    text-align: center;
+    
+}
+.log{
+    background-color: #e2fdff;
+    padding: 10px 20px;
+    border-radius: 5px;
+    color: black;
+    text-decoration: none;
+
+}
+.log:hover{
+    background-color: #001219;
+    color: white;
+    transition: 0.5s;
+}
+.tab:hover{
+    color: #000000;
+    transition: 0.2s;
+    background-color: azure;
+    border-radius: 5px;
+    transition: 0;
+}
+
+.error-container{
+    background-color: #f8f7ff;
+    text-align: center;
+    line-height: 1.7;
+    padding: 50px;
+    max-width: 800px;
+    margin: 40px auto;  /* center the container */
+    border-radius: 10px;
+}
+.error-container h1{
+    text-align: center;
+    margin-bottom: 20px;
+    font-size: 26px;
+}
+.footer-container{
+    background: #351661;
+    background: linear-gradient(264deg,rgba(53, 22, 97, 1) 0%, rgba(115, 0, 0, 1) 42%, rgba(13, 7, 7, 1) 100%);
+    color: white;
+    a{
+        color: white;
+        text-decoration: none;
+        position: relative;
+    }
+    .foot{
+        display: inline-block;
+        position: relative;
+    }
+}
+.follow{
+    position: relative;
+    bottom: 20px;
+    display: inline-block;
+    margin-left: 1100px;
+    gap: 20px;
+
+}
+
+.error-container span.error{
+    font-size: 80px;
+    background-color: #500075;
+    border-radius: 50%;
+    color: #ffffff;
+    margin-bottom: 20px;
+}
+.list span{
+    font-size: xx-large;
+    position: relative;
+    bottom: 5px;
+    color: white;
+}
+.un{
+    position: relative;
+    color: white;
+    font-weight: bold;
+}
+.list div{
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    flex-direction: column;
+}
+.user_data{
+	text-decoration:none;
+}

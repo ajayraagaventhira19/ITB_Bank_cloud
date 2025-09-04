@@ -1,0 +1,312 @@
+@charset "UTF-8";
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box; 
+    font-family: "Libre Caslon Text", serif;
+  font-weight: 500;
+  font-style: normal;
+
+}
+
+.navbar {
+    background: #500075;
+background: linear-gradient(237deg,rgba(80, 0, 117, 1) 0%, rgba(191, 44, 44, 1) 36%, rgba(13, 7, 7, 1) 100%);
+    
+padding: 10px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+
+.tab {
+    text-decoration: none;
+    color: white;
+    font-weight: bold;
+    padding: 10px;
+}
+.tab1 {
+    text-decoration: none;
+    color: white;
+    font-weight: bold;
+    padding: 5px;
+    font-size:xx-large;
+}
+.tab2 {
+    text-decoration: none;
+    color: white;
+    font-weight: bold;
+    padding: 5px;
+}
+
+.navbar ul {
+    list-style: none;
+    display: flex;
+    gap: 40px;
+}
+
+
+.navbar .logo h2 {
+    display: inline-block;
+    position: relative;
+    bottom: 40px;
+
+}
+
+.navbar .logo h1 {
+    text-align: center;
+    
+}
+.log{
+    background-color: #e2fdff;
+    padding: 10px 20px;
+    border-radius: 5px;
+    color: black;
+    text-decoration: none;
+
+}
+.log:hover{
+    background-color: #001219;
+    color: white;
+    transition: 0.5s;
+}
+.tab:hover{
+    color: #000000;
+    transition: 0.2s;
+    background-color: azure;
+    border-radius: 5px;
+    transition: 0;
+}
+.footer-container{
+    background: #351661;
+background: linear-gradient(264deg,rgba(53, 22, 97, 1) 0%, rgba(115, 0, 0, 1) 42%, rgba(13, 7, 7, 1) 100%);
+    padding: 10px 20px;
+    color: white;
+    a{
+        color: white;
+        text-decoration: none;
+        position: relative;
+    }
+    .foot{
+        display: inline-block;
+        position: relative;
+    }
+}
+.follow{
+    position: relative;
+    bottom: 20px;
+    display: inline-block;
+    margin-left: 1100px;
+    gap: 20px;
+
+}
+.contact{
+    display: block;
+    position: relative;
+    top: 10px;
+}
+.home-container{
+    max-width: 1200px;
+    margin: 40px auto;  
+    padding: 20px;
+    text-align: center;
+    display: flex;
+    justify-content: space-evenly;
+    gap: 20px;
+    flex-wrap: wrap;  /* allow wrapping on smaller screens */
+}
+.send-money{
+    background-color: #f3f3f3;
+    border: 0.1px solid black;
+    padding: 10px 20px;
+    border-radius: 5px;
+    color: black;
+    text-decoration: none;
+    font-weight: bold;
+    height: 230px;
+    width: 400px;
+    display: flex;
+    flex-direction: column;       /* stack items vertically */
+    justify-content: space-between;  /* one at top, one at bottom */
+    align-items: center;          /* center horizontally */
+    padding-top: 20px;
+    padding-bottom: 50px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1), 0 6px 20px rgba(0,0,0,0.1);
+}
+.send-money:hover{
+    background-color: #001219;
+    color: white;
+    transition: 0.5s;
+}
+.rupee{
+    display:flex;
+    background-color: rgb(24, 24, 251);
+    justify-content: center;
+    color: white;
+    padding: 10px;
+    border-radius: 50%;
+    text-align: center;
+
+    position: relative;
+}
+.send-money:hover .rupee {
+    background-color: gold;
+    color: black;   /* optional, to make the symbol readable */
+    transition: 0.5s;
+}
+.material-symbols-outlined {
+  font-variation-settings:
+  'FILL' 0,
+  'wght' 400,
+  'GRAD' 0,
+  'opsz' 24
+}
+.material-symbols-outlined {
+  font-variation-settings:
+  'FILL' 0,
+  'wght' 400,
+  'GRAD' 0,
+  'opsz' 24
+}
+.send-money .rupee,
+.send-money .material-symbols-outlined {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: rgb(24, 24, 251);
+    color: white;
+    border-radius: 50%;
+    text-align: center;
+    width: 60px;              /* bigger circle */
+    height: 60px;
+    font-size: 2.5rem;        /* bigger icon */
+    transition: 0.5s;
+}
+
+.send-money:hover .rupee,
+.send-money:hover .material-symbols-outlined {
+    background-color: gold;
+    color: black;
+}
+.bank-image {
+    width: 100%;          /* full width */
+    height: auto;         /* maintain aspect ratio */
+    object-fit: cover;    /* crop nicely if needed */
+    display: block;       /* remove extra gaps */
+    margin: 0 auto;
+ }
+ .container{
+    text-decoration: none;
+    color: black;
+ }
+.list span{
+    font-size: xx-large;
+    position: relative;
+    bottom: 5px;
+    color: white;
+}
+.un{
+    position: relative;
+    color: white;
+    font-weight: bold;
+}
+.list div{
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    flex-direction: column;
+}
+a {
+	text-decoration:none;
+}
+
+@media (max-width: 1024px) {
+    .send-money {
+        width: 45%;
+    }
+}
+
+@media (max-width: 768px) {
+    .navbar {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .navbar ul {
+        flex-direction: row;
+        gap: 6px;
+        margin-top: 10px;
+    }
+
+    .navbar h1 {
+        font-size: 10px;
+        margin: 10px 0;
+        text-align: center;
+    }
+
+    .navbar .logo {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+    }
+}
+
+@media (max-width: 600px) {
+    .about-container {
+        padding: 20px;
+    }
+
+    .about-container h1 {
+        font-size: 28px;
+    }
+
+    .about-container p, .about-container ul li {
+        font-size: 16px;
+    }
+
+    .navbar .logo img {
+        width: 40px;
+        height: auto;
+    }
+
+    .navbar h1 a {
+        font-size: 18px;
+    }
+
+    .navbar ul li a.tab, 
+    .navbar ul li a.log {
+        padding: 6px 10px;
+        font-size: 14px;
+    }
+}
+@media (max-width: 600px) {
+    .home-container {
+        flex-direction: column;
+        gap: 20px;
+        padding: 10px;
+    }
+
+    .send-money {
+        width: 100%;
+        height: auto;
+        padding: 20px;
+    }
+
+    .send-money h1 {
+        font-size: 1.5rem;
+    }
+
+    .rupee,
+    .material-symbols-outlined {
+        width: 50px;
+        height: 50px;
+        font-size: 2rem;
+    }
+
+    .log {
+        width: 100%;
+        text-align: center;
+        padding: 8px 0;
+    }
+}
