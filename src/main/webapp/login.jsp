@@ -36,7 +36,7 @@
       <br>
       <button type="submit">Login</button>
     </form>
-    <p>Don't have an account? <a href="signup.html">Sign Up</a></p>
+    <p>Don't have an account? <a href="signup.jsp">Sign Up</a></p>
   </div>
 
   <script>
