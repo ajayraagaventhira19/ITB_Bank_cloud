@@ -151,29 +151,25 @@ public class ITBdao {
     }
 }
 
-	public boolean deposit_money(String username, double amount){
+	// Deposit money for a given account
+public boolean deposit_money(Account user, double amount) {
     try {
-        double oldBalance = 0;
-        String getBalance = "SELECT balance FROM ACCOUNT WHERE username=?";
-        try (PreparedStatement ps = con.prepareStatement(getBalance)) {
-            ps.setString(1, username);
-            ResultSet rs = ps.executeQuery();
-            if(rs.next()) oldBalance = rs.getDouble("balance");
-            else return false; 
-        }
-
+        // 1. Get old balance from Account object
+        double oldBalance = user.getAmount();
         double newBalance = oldBalance + amount;
 
-        String updateQuery="UPDATE ACCOUNT SET balance=? WHERE username=?";
+        // 2. Update balance in ACCOUNT table
+        String updateQuery = "UPDATE ACCOUNT SET balance=? WHERE username=?";
         try (PreparedStatement ps = con.prepareStatement(updateQuery)) {
             ps.setDouble(1, newBalance);
-            ps.setString(2, username);
+            ps.setString(2, user.getUsername());
             ps.executeUpdate();
         }
 
-        String historyQuery="INSERT INTO TRANSACTION_HISTORY (username, amount_before, current_balance, amount, transaction_message, txn_date) VALUES (?,?,?,?,?,NOW())";
+        // 3. Insert into TRANSACTION_HISTORY
+        String historyQuery = "INSERT INTO TRANSACTION_HISTORY (username, amount_before, current_balance, amount, transaction_message, txn_date) VALUES (?, ?, ?, ?, ?, NOW())";
         try (PreparedStatement ps = con.prepareStatement(historyQuery)) {
-            ps.setString(1, username);
+            ps.setString(1, user.getUsername());
             ps.setDouble(2, oldBalance);
             ps.setDouble(3, newBalance);
             ps.setDouble(4, amount);
@@ -182,39 +178,36 @@ public class ITBdao {
         }
 
         return true;
-    } catch(Exception e) {
+
+    } catch (Exception e) {
         e.printStackTrace();
         return false;
     }
 }
 
-
-	
-	public boolean withdraw_money(String username, double amount){
+// Withdraw money for a given account
+public boolean withdraw_money(Account user, double amount) {
     try {
-        // 1. Get current balance
-        double oldBalance = 0;
-        String getBalance = "SELECT balance FROM ACCOUNT WHERE username=?";
-        try (PreparedStatement ps = con.prepareStatement(getBalance)) {
-            ps.setString(1, username);
-            ResultSet rs = ps.executeQuery();
-            if(rs.next()) oldBalance = rs.getDouble("balance");
-            else return false; 
-        }
+        // 1. Get old balance from Account object
+        double oldBalance = user.getAmount();
 
-        if(oldBalance < amount) return false; 
+        // 2. Check if sufficient balance
+        if (oldBalance < amount) return false;
+
         double newBalance = oldBalance - amount;
 
-        String updateQuery="UPDATE ACCOUNT SET balance=? WHERE username=?";
+        // 3. Update balance in ACCOUNT table
+        String updateQuery = "UPDATE ACCOUNT SET balance=? WHERE username=?";
         try (PreparedStatement ps = con.prepareStatement(updateQuery)) {
             ps.setDouble(1, newBalance);
-            ps.setString(2, username);
+            ps.setString(2, user.getUsername());
             ps.executeUpdate();
         }
 
-        String historyQuery="INSERT INTO TRANSACTION_HISTORY (username, amount_before, current_balance, amount, transaction_message, txn_date) VALUES (?,?,?,?,?,NOW())";
+        // 4. Insert into TRANSACTION_HISTORY
+        String historyQuery = "INSERT INTO TRANSACTION_HISTORY (username, amount_before, current_balance, amount, transaction_message, txn_date) VALUES (?, ?, ?, ?, ?, NOW())";
         try (PreparedStatement ps = con.prepareStatement(historyQuery)) {
-            ps.setString(1, username);
+            ps.setString(1, user.getUsername());
             ps.setDouble(2, oldBalance);
             ps.setDouble(3, newBalance);
             ps.setDouble(4, amount);
@@ -223,11 +216,13 @@ public class ITBdao {
         }
 
         return true;
-    } catch(Exception e) {
+
+    } catch (Exception e) {
         e.printStackTrace();
         return false;
     }
 }
+
 
 	
 	public List<Transaction> getTransaction_history(String name) {
