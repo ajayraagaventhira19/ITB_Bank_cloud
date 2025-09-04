@@ -37,7 +37,6 @@ public class ITBdao {
 			p.setString(11, password);
 			p.execute();
 			
-			// --- 2. Insert initial deposit into Transaction_History ---
 			PreparedStatement psTxn = con.prepareStatement(insertTxn);
 			psTxn.setString(1, username);
 			psTxn.setDouble(2, 0.0);              // old balance (before account open = 0)
@@ -90,119 +89,145 @@ public class ITBdao {
 		}
 	}
 	
-	public boolean update_balance(Account sender, Account receiver, double amount) {
-	    String updateQuery = "UPDATE ACCOUNT SET balance=? WHERE username=?";
-	    String insertTxn = "INSERT INTO TRANSACTION_HISTORY(username, amount_before, current_balance, amount, transaction_message, txn_date) VALUES(?,?,?,?,?,NOW())";
+	public boolean update_balance(String senderUsername, String receiverUsername, double amount) {
+    String getBalance = "SELECT balance FROM ACCOUNT WHERE username=?";
+    String updateQuery = "UPDATE ACCOUNT SET balance=? WHERE username=?";
+    String insertTxn = "INSERT INTO TRANSACTION_HISTORY(username, amount_before, current_balance, amount, transaction_message, txn_date) VALUES(?,?,?,?,?,NOW())";
+
+    try {
+        double senderOldBalance = 0;
+        try (PreparedStatement ps = con.prepareStatement(getBalance)) {
+            ps.setString(1, senderUsername);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) senderOldBalance = rs.getDouble("balance");
+            else return false; 
+        }
+
+        if (senderOldBalance < amount) return false; 
+        double senderNewBalance = senderOldBalance - amount;
+
+        double receiverOldBalance = 0;
+        try (PreparedStatement ps = con.prepareStatement(getBalance)) {
+            ps.setString(1, receiverUsername);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) receiverOldBalance = rs.getDouble("balance");
+            else return false; 
+        }
+        double receiverNewBalance = receiverOldBalance + amount;
+
+        try (PreparedStatement ps = con.prepareStatement(updateQuery)) {
+            ps.setDouble(1, senderNewBalance);
+            ps.setString(2, senderUsername);
+            ps.executeUpdate();
+        }
+        try (PreparedStatement ps = con.prepareStatement(insertTxn)) {
+            ps.setString(1, senderUsername);
+            ps.setDouble(2, senderOldBalance);
+            ps.setDouble(3, senderNewBalance);
+            ps.setDouble(4, amount);
+            ps.setString(5, "Transferred " + amount + " to " + receiverUsername);
+            ps.executeUpdate();
+        }
+
+        try (PreparedStatement ps = con.prepareStatement(updateQuery)) {
+            ps.setDouble(1, receiverNewBalance);
+            ps.setString(2, receiverUsername);
+            ps.executeUpdate();
+        }
+        try (PreparedStatement ps = con.prepareStatement(insertTxn)) {
+            ps.setString(1, receiverUsername);
+            ps.setDouble(2, receiverOldBalance);
+            ps.setDouble(3, receiverNewBalance);
+            ps.setDouble(4, amount);
+            ps.setString(5, "Received " + amount + " from " + senderUsername);
+            ps.executeUpdate();
+        }
+
+        return true;
+
+    } catch (Exception e) {
+        e.printStackTrace();
+        return false;
+    }
+}
+
+	public boolean deposit_money(String username, double amount){
+    try {
+        double oldBalance = 0;
+        String getBalance = "SELECT balance FROM ACCOUNT WHERE username=?";
+        try (PreparedStatement ps = con.prepareStatement(getBalance)) {
+            ps.setString(1, username);
+            ResultSet rs = ps.executeQuery();
+            if(rs.next()) oldBalance = rs.getDouble("balance");
+            else return false; 
+        }
+
+        double newBalance = oldBalance + amount;
+
+        String updateQuery="UPDATE ACCOUNT SET balance=? WHERE username=?";
+        try (PreparedStatement ps = con.prepareStatement(updateQuery)) {
+            ps.setDouble(1, newBalance);
+            ps.setString(2, username);
+            ps.executeUpdate();
+        }
+
+        String historyQuery="INSERT INTO TRANSACTION_HISTORY (username, amount_before, current_balance, amount, transaction_message, txn_date) VALUES (?,?,?,?,?,NOW())";
+        try (PreparedStatement ps = con.prepareStatement(historyQuery)) {
+            ps.setString(1, username);
+            ps.setDouble(2, oldBalance);
+            ps.setDouble(3, newBalance);
+            ps.setDouble(4, amount);
+            ps.setString(5, "AMOUNT CREDITED");
+            ps.executeUpdate();
+        }
+
+        return true;
+    } catch(Exception e) {
+        e.printStackTrace();
+        return false;
+    }
+}
+
+
 	
-		    try {
-		        // --- Update sender ---
-		        double senderOldBalance = sender.getAmount();
-		        double senderNewBalance = senderOldBalance - amount;
-		
-		        try (PreparedStatement ps1 = con.prepareStatement(updateQuery)) {
-		            ps1.setDouble(1, senderNewBalance);
-		            ps1.setString(2, sender.getUsername());
-		            ps1.executeUpdate();
-		        }
-		
-		        try (PreparedStatement psTxn1 = con.prepareStatement(insertTxn)) {
-		            psTxn1.setString(1, sender.getUsername());
-		            psTxn1.setDouble(2, senderOldBalance);
-		            psTxn1.setDouble(3, senderNewBalance);
-		            psTxn1.setDouble(4, amount);
-		            psTxn1.setString(5, "Transferred " + amount + " to " + receiver.getUsername());
-		            psTxn1.executeUpdate();
-		        }
-		
-		        // --- Update receiver ---
-		        double receiverOldBalance = receiver.getAmount();
-		        double receiverNewBalance = receiverOldBalance + amount;
-		
-		        try (PreparedStatement ps2 = con.prepareStatement(updateQuery)) {
-		            ps2.setDouble(1, receiverNewBalance);
-		            ps2.setString(2, receiver.getUsername());
-		            ps2.executeUpdate();
-		        }
-		
-		        try (PreparedStatement psTxn2 = con.prepareStatement(insertTxn)) {
-		            psTxn2.setString(1, receiver.getUsername());
-		            psTxn2.setDouble(2, receiverOldBalance);
-		            psTxn2.setDouble(3, receiverNewBalance);
-		            psTxn2.setDouble(4, amount);
-		            psTxn2.setString(5, "Received " + amount + " from " + sender.getUsername());
-		            psTxn2.executeUpdate();
-		        }
-		
-		        // --- Update Account objects in memory ---
-		        sender.setAmount(senderNewBalance);
-		        receiver.setAmount(receiverNewBalance);
-		
-		        return true;
-		
-		    } catch (Exception e) {
-		        e.printStackTrace();
-		        return false;
-		    }
-	}
+	public boolean withdraw_money(String username, double amount){
+    try {
+        // 1. Get current balance
+        double oldBalance = 0;
+        String getBalance = "SELECT balance FROM ACCOUNT WHERE username=?";
+        try (PreparedStatement ps = con.prepareStatement(getBalance)) {
+            ps.setString(1, username);
+            ResultSet rs = ps.executeQuery();
+            if(rs.next()) oldBalance = rs.getDouble("balance");
+            else return false; 
+        }
 
-	public boolean deposit_money(Account user,double amount){
-	    try {
-	        double oldBalance = user.getAmount();
-	        double newBalance = oldBalance + amount;
+        if(oldBalance < amount) return false; 
+        double newBalance = oldBalance - amount;
 
-	        String query="UPDATE ACCOUNT SET balance=? WHERE username=?";
-	        PreparedStatement ps=con.prepareStatement(query);
-	        ps.setDouble(1, newBalance);
-	        ps.setString(2, user.getUsername());
-	        ps.executeUpdate();
+        String updateQuery="UPDATE ACCOUNT SET balance=? WHERE username=?";
+        try (PreparedStatement ps = con.prepareStatement(updateQuery)) {
+            ps.setDouble(1, newBalance);
+            ps.setString(2, username);
+            ps.executeUpdate();
+        }
 
-	        String historyQuery="INSERT INTO TRANSACTION_HISTORY (username, amount_before, current_balance, amount, transaction_message) VALUES (?,?,?,?,?)";
+        String historyQuery="INSERT INTO TRANSACTION_HISTORY (username, amount_before, current_balance, amount, transaction_message, txn_date) VALUES (?,?,?,?,?,NOW())";
+        try (PreparedStatement ps = con.prepareStatement(historyQuery)) {
+            ps.setString(1, username);
+            ps.setDouble(2, oldBalance);
+            ps.setDouble(3, newBalance);
+            ps.setDouble(4, amount);
+            ps.setString(5, "AMOUNT DEBITED");
+            ps.executeUpdate();
+        }
 
-	        PreparedStatement h=con.prepareStatement(historyQuery);
-	        h.setString(1, user.getUsername());
-	        h.setDouble(2, oldBalance);
-	        h.setDouble(3, newBalance);
-	        h.setDouble(4, amount);
-	        h.setString(5, "AMOUNT CREDITED");
-	        h.executeUpdate();
-
-	        return true;
-	    }catch(Exception e) {
-	        e.printStackTrace();
-	        return false;
-	    }
-	}
-
-	
-	public boolean withdraw_money(Account user, double amount) {
-	    try {
-	        double oldBalance = user.getAmount();
-	        double newBalance = oldBalance - amount;
-
-	        // 1. Update balance in Account
-	        String query = "UPDATE ACCOUNT SET balance=? WHERE username=?";
-	        PreparedStatement ps = con.prepareStatement(query);
-	        ps.setDouble(1, newBalance);
-	        ps.setString(2, user.getUsername());
-	        ps.executeUpdate();
-
-	        // 2. Insert into Transaction_History
-	        String historyQuery="INSERT INTO TRANSACTION_HISTORY (username, amount_before, current_balance, amount, transaction_message) VALUES (?,?,?,?,?)";
-
-	        PreparedStatement h = con.prepareStatement(historyQuery);
-	        h.setString(1, user.getUsername());
-	        h.setDouble(2, oldBalance);
-	        h.setDouble(3, newBalance);
-	        h.setDouble(4, amount);
-	        h.setString(5, "AMOUNT DEBITED");
-	        h.executeUpdate();
-
-	        return true;
-	    } catch (Exception e) {
-	        e.printStackTrace();
-	        return false;
-	    }
-	}
+        return true;
+    } catch(Exception e) {
+        e.printStackTrace();
+        return false;
+    }
+}
 
 	
 	public List<Transaction> getTransaction_history(String name) {
