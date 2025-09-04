@@ -93,68 +93,56 @@ public class ITBdao {
 	public boolean update_balance(Account sender, Account receiver, double amount) {
 	    String updateQuery = "UPDATE ACCOUNT SET balance=? WHERE username=?";
 	    String insertTxn = "INSERT INTO TRANSACTION_HISTORY(username, amount_before, current_balance, amount, transaction_message, txn_date) VALUES(?,?,?,?,?,NOW())";
-
-
-	    try {
-	        con.setAutoCommit(false); // Begin transaction
-
-	        // --- 1. Deduct from Sender ---
-	        double senderOldBalance = sender.getAmount();
-	        double senderNewBalance = senderOldBalance - amount;
-
-	        try (PreparedStatement ps1 = con.prepareStatement(updateQuery)) {
-	            ps1.setDouble(1, senderNewBalance);
-	            ps1.setString(2, sender.getUsername());
-	            ps1.executeUpdate();
-	        }
-
-	        try (PreparedStatement psTxn1 = con.prepareStatement(insertTxn)) {
-	            psTxn1.setString(1, sender.getUsername());
-	            psTxn1.setDouble(2, senderOldBalance);
-	            psTxn1.setDouble(3, senderNewBalance);
-	            psTxn1.setDouble(4, amount);
-	            psTxn1.setString(5, "Transferred " + amount + " to " + receiver.getUsername());
-	            psTxn1.executeUpdate();
-	        }
-
-	        // --- 2. Add to Receiver ---
-	        double receiverOldBalance = receiver.getAmount();
-	        double receiverNewBalance = receiverOldBalance + amount;
-
-	        try (PreparedStatement ps2 = con.prepareStatement(updateQuery)) {
-	            ps2.setDouble(1, receiverNewBalance);
-	            ps2.setString(2, receiver.getUsername());
-	            ps2.executeUpdate();
-	        }
-
-	        try (PreparedStatement psTxn2 = con.prepareStatement(insertTxn)) {
-	            psTxn2.setString(1, receiver.getUsername());
-	            psTxn2.setDouble(2, receiverOldBalance);
-	            psTxn2.setDouble(3, receiverNewBalance);
-	            psTxn2.setDouble(4, amount);
-	            psTxn2.setString(5, "Received " + amount + " from " + sender.getUsername());
-	            psTxn2.executeUpdate();
-	        }
-
-	        // ✅ Commit only if ALL updates succeed
-	        con.commit();
-	        return true;
-
-	    } catch (Exception e) {
-	        try {
-	            con.rollback(); // ❌ Rollback on failure
-	        } catch (SQLException ex) {
-	            ex.printStackTrace();
-	        }
-	        e.printStackTrace();
-	        return false;
-	    } finally {
-	        try {
-	            con.setAutoCommit(true); // Restore auto-commit
-	        } catch (SQLException ex) {
-	            ex.printStackTrace();
-	        }
-	    }
+	
+		    try {
+		        // --- Update sender ---
+		        double senderOldBalance = sender.getAmount();
+		        double senderNewBalance = senderOldBalance - amount;
+		
+		        try (PreparedStatement ps1 = con.prepareStatement(updateQuery)) {
+		            ps1.setDouble(1, senderNewBalance);
+		            ps1.setString(2, sender.getUsername());
+		            ps1.executeUpdate();
+		        }
+		
+		        try (PreparedStatement psTxn1 = con.prepareStatement(insertTxn)) {
+		            psTxn1.setString(1, sender.getUsername());
+		            psTxn1.setDouble(2, senderOldBalance);
+		            psTxn1.setDouble(3, senderNewBalance);
+		            psTxn1.setDouble(4, amount);
+		            psTxn1.setString(5, "Transferred " + amount + " to " + receiver.getUsername());
+		            psTxn1.executeUpdate();
+		        }
+		
+		        // --- Update receiver ---
+		        double receiverOldBalance = receiver.getAmount();
+		        double receiverNewBalance = receiverOldBalance + amount;
+		
+		        try (PreparedStatement ps2 = con.prepareStatement(updateQuery)) {
+		            ps2.setDouble(1, receiverNewBalance);
+		            ps2.setString(2, receiver.getUsername());
+		            ps2.executeUpdate();
+		        }
+		
+		        try (PreparedStatement psTxn2 = con.prepareStatement(insertTxn)) {
+		            psTxn2.setString(1, receiver.getUsername());
+		            psTxn2.setDouble(2, receiverOldBalance);
+		            psTxn2.setDouble(3, receiverNewBalance);
+		            psTxn2.setDouble(4, amount);
+		            psTxn2.setString(5, "Received " + amount + " from " + sender.getUsername());
+		            psTxn2.executeUpdate();
+		        }
+		
+		        // --- Update Account objects in memory ---
+		        sender.setAmount(senderNewBalance);
+		        receiver.setAmount(receiverNewBalance);
+		
+		        return true;
+		
+		    } catch (Exception e) {
+		        e.printStackTrace();
+		        return false;
+		    }
 	}
 
 	public boolean deposit_money(Account user,double amount){
