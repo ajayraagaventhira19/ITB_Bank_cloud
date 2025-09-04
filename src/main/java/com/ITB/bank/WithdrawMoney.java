@@ -20,6 +20,9 @@ public class WithdrawMoney extends HttpServlet {
 			
 				if(a.getAmount()>=amount && pass.equals(a.getPassword())) {
 						if(db.withdraw_money(a, amount)) {
+							Account user=db.get_data(a.getUsername());
+								s.removeAttribute("username");
+								s.setAttribute("username", user);
 							response.sendRedirect("withdrawnSuccessfull.jsp");
 						}else {
 							response.sendRedirect("error3.jsp");
