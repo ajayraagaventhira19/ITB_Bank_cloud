@@ -20,6 +20,9 @@ public class DepositMoney extends HttpServlet {
 		
 			if(user!=null) {
 					if(db.deposit_money(user, amount)) {
+						Account username=db.get_data(user.getUsername());
+						s.removeAttribute("username");
+						s.setAttribute("username", user);
 						response.sendRedirect("depositedSuccessfull.jsp");
 					}else {
 						response.sendRedirect("error2.jsp");
